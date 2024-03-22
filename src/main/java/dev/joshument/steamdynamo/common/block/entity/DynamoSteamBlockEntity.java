@@ -37,6 +37,12 @@ public class DynamoSteamBlockEntity extends DynamoBlockEntity {
     }
 
     @Override
+    protected int getBaseProcessTick() {
+
+        return StirlingFuelManager.instance().getBasePower();
+    }
+
+    @Override
     protected boolean canProcessStart() {
         // again, stirling because we want to go off of stirling fuel
         return StirlingFuelManager.instance().getEnergy(fuelSlot.getItemStack()) > 0 && waterTank.getStored() > Config.waterConsumptionAmount;
