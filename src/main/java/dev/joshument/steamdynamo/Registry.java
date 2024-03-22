@@ -1,11 +1,14 @@
 package dev.joshument.steamdynamo;
 
+import cofh.core.util.helpers.AugmentDataHelper;
 import cofh.lib.util.DeferredRegisterCoFH;
 import cofh.lib.util.constants.BlockStatePropertiesCoFH;
+import cofh.lib.util.constants.NBTTags;
 import cofh.lib.util.helpers.BlockHelper;
 import cofh.thermal.core.common.config.ThermalCoreConfig;
 import cofh.thermal.core.init.registries.ThermalCreativeTabs;
 import cofh.thermal.lib.common.block.DynamoBlock;
+import cofh.thermal.lib.common.item.AugmentItem;
 import cofh.thermal.lib.common.item.BlockItemAugmentable;
 import cofh.thermal.lib.util.ThermalAugmentRules;
 import dev.joshument.steamdynamo.client.gui.DynamoSteamScreen;
@@ -77,6 +80,17 @@ public class Registry {
                         .setNumSlots(() -> ThermalCoreConfig.dynamoAugments)
                         .setAugValidator(ThermalAugmentRules.DYNAMO_VALIDATOR)
                         .setModId(SteamDynamo.ID_DYNAMO_STEAM)
+        );
+
+        public static final RegistryObject<Item> STEAM_TURBINE_AUGMENT = ITEMS.register(
+                "steam_turbine_augment",
+                () -> new AugmentItem(
+                        new Item.Properties(),
+                        AugmentDataHelper.builder()
+                                .type("Steam")
+                                .mod(NBTTags.TAG_AUGMENT_DYNAMO_POWER, 2.0F)
+                                .build()
+                )
         );
     }
 

@@ -10,6 +10,7 @@ import dev.joshument.steamdynamo.Config;
 import dev.joshument.steamdynamo.Registry;
 import dev.joshument.steamdynamo.common.inventory.DynamoSteamMenu;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -21,10 +22,16 @@ import javax.annotation.Nullable;
 import static cofh.lib.util.Constants.TANK_SMALL;
 
 public class DynamoSteamBlockEntity extends DynamoBlockEntity {
+    public static final String TAG_IS_BOILER = "IsBoiler";
+    public static final String TAG_IS_TURBINE = "IsTurbine";
+
     // stirling fuel because we want the same power generation as a stirling generator
     protected ItemStorageCoFH fuelSlot = new ItemStorageCoFH(item -> filter.valid(item) && StirlingFuelManager.instance().validFuel(item));
     protected FluidStorageCoFH waterTank = new FluidStorageCoFH(TANK_SMALL, fluid -> fluid.getFluid().isSame(Fluids.WATER));
     protected int waterFuelBuffer = 0;
+
+    protected boolean isTurbine;
+    protected boolean isBoiler;
 
     public DynamoSteamBlockEntity(BlockPos pos, BlockState state) {
         super(Registry.BlockEntities.DYNAMO_STEAM.get(), pos, state);
@@ -34,6 +41,20 @@ public class DynamoSteamBlockEntity extends DynamoBlockEntity {
 
         addAugmentSlots(ThermalCoreConfig.dynamoAugments);
         initHandlers();
+    }
+
+    public boolean isTurbine() {
+        return isTurbine;
+    }
+
+    public boolean isBoiler() {
+        return isBoiler;
+    }
+
+    @Override
+    protected int getBaseProcessTick() {
+
+        return StirlingFuelManager.instance().getBasePower();
     }
 
     @Override
@@ -76,6 +97,22 @@ public class DynamoSteamBlockEntity extends DynamoBlockEntity {
         waterFuelBuffer -= super.processTick();
 
         return 0;
+    }
+
+    @Override
+    public void load(CompoundTag nbt) {
+        super.load(nbt);
+
+        isTurbine = nbt.getBoolean(TAG_IS_TURBINE);
+        isBoiler = nbt.getBoolean(TAG_IS_BOILER);
+    }
+
+    @Override
+    public void saveAdditional(CompoundTag nbt) {
+        super.saveAdditional(nbt);
+
+        nbt.putBoolean(TAG_IS_TURBINE, isTurbine);
+        nbt.putBoolean(TAG_IS_BOILER, isBoiler);
     }
 
     @Nullable

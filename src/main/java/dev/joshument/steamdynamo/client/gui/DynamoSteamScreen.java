@@ -6,6 +6,7 @@ import cofh.core.util.helpers.GuiHelper;
 import cofh.lib.common.fluid.FluidStorageCoFH;
 import cofh.lib.util.helpers.StringHelper;
 import cofh.thermal.core.client.gui.ThermalGuiHelper;
+import dev.joshument.steamdynamo.common.block.entity.DynamoSteamBlockEntity;
 import dev.joshument.steamdynamo.common.inventory.DynamoSteamMenu;
 import cofh.thermal.lib.client.gui.DynamoScreen;
 import net.minecraft.network.chat.Component;
@@ -18,15 +19,12 @@ import static cofh.lib.util.constants.ModIds.ID_THERMAL;
 
 public class DynamoSteamScreen extends DynamoScreen<DynamoSteamMenu> {
     private static final ResourceLocation TEXTURE = new ResourceLocation(ID_THERMAL, "textures/gui/container/item_dynamo.png");
+    private static final ResourceLocation TEXTURE_TURBINE = new ResourceLocation(ID_THERMAL, "textures/gui/container/fluid_dynamo.png");
 
     public DynamoSteamScreen(DynamoSteamMenu container, Inventory inv, Component _title) {
         super(container, inv, container.tile, StringHelper.getTextComponent("block.steamdynamo.steam_dynamo"));
-        texture = TEXTURE;
+        texture = ((DynamoSteamBlockEntity) container.tile).isTurbine() ? TEXTURE_TURBINE : TEXTURE;
         info = GuiHelper.appendLine(GuiHelper.generatePanelInfo("info.steamdynamo.steam_dynamo"), "info.thermal.dynamo.throttle");
-    }
-
-    public static ElementFluidStorage createThinMediumFluidStorage(IGuiAccess gui, int posX, int posY, FluidStorageCoFH storage) {
-        return createDefaultFluidStorage(gui, posX, posY, storage, 14, 42, PATH_ELEMENTS + "storage_fluid_medium.png", PATH_ELEMENTS + "overlay_fluid_medium.png", 32, 64);
     }
 
     public void init() {
