@@ -27,7 +27,7 @@ public class SteamDynamo
     public static final String ID_DYNAMO_STEAM = "steam_dynamo";
 
     // Directly reference a slf4j logger
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
 
     public SteamDynamo()

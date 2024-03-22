@@ -8,6 +8,7 @@ import cofh.thermal.core.util.managers.dynamo.StirlingFuelManager;
 import cofh.thermal.lib.common.block.entity.DynamoBlockEntity;
 import dev.joshument.steamdynamo.Config;
 import dev.joshument.steamdynamo.Registry;
+import dev.joshument.steamdynamo.SteamDynamo;
 import dev.joshument.steamdynamo.common.inventory.DynamoSteamMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -20,10 +21,13 @@ import net.minecraft.world.level.material.Fluids;
 import javax.annotation.Nullable;
 
 import static cofh.lib.util.Constants.TANK_SMALL;
+import static cofh.lib.util.constants.NBTTags.TAG_TYPE;
 
 public class DynamoSteamBlockEntity extends DynamoBlockEntity {
-    public static final String TAG_IS_BOILER = "IsBoiler";
-    public static final String TAG_IS_TURBINE = "IsTurbine";
+    public static final String TAG_FEATURE_CONVERSION_TYPE = "SteamConversionType";
+    public static final String TAG_BOILER = "Boiler";
+    public static final String TAG_TURBINE = "Turbine";
+    public static final String TAG_TYPE_STEAM = "Steam";
 
     // stirling fuel because we want the same power generation as a stirling generator
     protected ItemStorageCoFH fuelSlot = new ItemStorageCoFH(item -> filter.valid(item) && StirlingFuelManager.instance().validFuel(item));
@@ -100,19 +104,29 @@ public class DynamoSteamBlockEntity extends DynamoBlockEntity {
     }
 
     @Override
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
+    protected void resetAttributes() {
+        super.resetAttributes();
 
-        isTurbine = nbt.getBoolean(TAG_IS_TURBINE);
-        isBoiler = nbt.getBoolean(TAG_IS_BOILER);
+        isTurbine = false;
+        isBoiler = false;
+    }
+
+    @Override
+    public void setAttributesFromAugment(CompoundTag augmentData) {
+        super.setAttributesFromAugment(augmentData);
+
+        // have to use strings because of the way that thermal handles augments (don't ask me why they never added bools)
+        if (augmentData.getString(TAG_TYPE).equals(TAG_TYPE_STEAM)) {
+            isBoiler = augmentData.getString(TAG_FEATURE_CONVERSION_TYPE).equals(TAG_BOILER);
+            isTurbine = augmentData.getString(TAG_FEATURE_CONVERSION_TYPE).equals(TAG_TURBINE);
+            SteamDynamo.LOGGER.info("Steam augment installed!");
+            SteamDynamo.LOGGER.info(isBoiler ? "Boiler" : "Turbine");
+        }
     }
 
     @Override
     public void saveAdditional(CompoundTag nbt) {
         super.saveAdditional(nbt);
-
-        nbt.putBoolean(TAG_IS_TURBINE, isTurbine);
-        nbt.putBoolean(TAG_IS_BOILER, isBoiler);
     }
 
     @Nullable

@@ -26,6 +26,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import static dev.joshument.steamdynamo.common.block.entity.DynamoSteamBlockEntity.*;
+
 public class Registry {
     public static final DeferredRegisterCoFH<Block> BLOCKS = DeferredRegisterCoFH.create(ForgeRegistries.BLOCKS, SteamDynamo.MODID);
     public static final DeferredRegisterCoFH<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegisterCoFH.create(ForgeRegistries.BLOCK_ENTITY_TYPES, SteamDynamo.MODID);
@@ -87,8 +89,20 @@ public class Registry {
                 () -> new AugmentItem(
                         new Item.Properties(),
                         AugmentDataHelper.builder()
-                                .type("Steam")
-                                .mod(NBTTags.TAG_AUGMENT_DYNAMO_POWER, 2.0F)
+                                .type(TAG_TYPE_STEAM)
+                                .feature(TAG_FEATURE_CONVERSION_TYPE, TAG_TURBINE)
+                                .mod(NBTTags.TAG_AUGMENT_DYNAMO_POWER, 1.0F)
+                                .build()
+                )
+        );
+
+        public static final RegistryObject<Item> STEAM_BOILER_AUGMENT = ITEMS.register(
+                "steam_boiler_augment",
+                () -> new AugmentItem(
+                        new Item.Properties(),
+                        AugmentDataHelper.builder()
+                                .type(TAG_TYPE_STEAM)
+                                .feature(TAG_FEATURE_CONVERSION_TYPE, TAG_BOILER)
                                 .build()
                 )
         );
